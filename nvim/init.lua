@@ -1,2 +1,1 @@
-print("hhello")
-require("setup")
+require("vladimus")
