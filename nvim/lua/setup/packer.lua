@@ -27,5 +27,11 @@ use {
 
 use('theprimeagen/harpoon')
 use('mbbill/undotree')
+use('tpope/vim-fugitive')
+
+
+-- LSP setup
+use('mason-org/mason.nvim')
+
 end)
 
