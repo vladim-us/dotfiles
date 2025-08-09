@@ -1,52 +1,63 @@
 return {
-  {
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
+    branch = "v3.x", -- Use the stable 3.x branch
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons", -- optional, but recommended for icons
+        "nvim-lua/plenary.nvim",
+        "MunifTanjim/nui.nvim",
+        "nvim-tree/nvim-web-devicons", -- Optional, for file icons
     },
-    lazy = false, -- neo-tree will lazily load itself
-    ---@module 'neo-tree'
-    ---@type neotree.Config
-    opts = {
-      filesystem = {
-        follow_current_file = { enabled = true },
-        filtered_items = {
-          visible = true,
-          hide_dotfiles = false,
-          hide_gitignored = false,
-        },
-        hijack_netrw_behavior = "open_current",
-      },
-      popup_border_style = "single",
-      -- Add renderer settings for trailing slashes and highlights
-      renderer = {
-        add_trailing = true, -- Add trailing slash to directories
-        group_empty = true, -- Optional: Groups empty directories
-        highlight_git = true, -- Optional: Enable git status highlights
-        highlight_opened_files = "all", -- Highlight open files
-      },
-      -- Custom highlights for directories and files
-      window = {
-        mappings = {}, -- Add custom keymappings if needed
-      },
-      -- Define highlight groups
-      event_handlers = {
-        {
-          event = "neo_tree_buffer_enter",
-          handler = function()
-            -- Enable line numbers in neo-tree buffer
-            vim.wo.number = true
-            -- Set highlights for directories and files
-            vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#7aa2f7", bold = true }) -- Blue from TokyoNight for directories
-            vim.api.nvim_set_hl(0, "NeoTreeFileName", { fg = "#9ece6a" }) -- Green from TokyoNight for files
-            vim.api.nvim_set_hl(0, "NeoTreeGitModified", { fg = "#f7768e" }) -- Red for modified files (optional)
-            vim.api.nvim_set_hl(0, "NeoTreeGitStaged", { fg = "#bb9af7" }) -- Purple for staged files (optional)
-          end,
-        },
-      },
+    config = function()
+        require("neo-tree").setup({
+            -- Basic configuration (customize as needed)
+            sources = { "filesystem", "buffers", "git_status" },
+            filesystem = {
+                follow_current_file = { enabled = true }, -- Auto-focus current file
+                use_libuv_file_watcher = true, -- Auto-refresh on file changes
+                window = {
+                    mappings = {
+                        ["o"] = "system_open"},
+                },
+
+            },
+            commands = {
+                system_open = function(state)
+                    local node = state.tree:get_node()
+                    local path = node:get_id()
+                    -- macOs: open file in default application in the background.
+                    vim.fn.jobstart({ "open", path }, { detach = true })
+                    -- Linux: open file in default application
+                    vim.fn.jobstart({ "xdg-open", path }, { detach = true })
+
+                    -- Windows: Without removing the file from the path, it opens in code.exe instead of explorer.exe
+                    local p
+                    local lastSlashIndex = path:match("^.+()\\[^\\]*$") -- Match the last slash and everything before it
+                    if lastSlashIndex then
+                        p = path:sub(1, lastSlashIndex - 1) -- Extract substring before the last slash
+                    else
+                        p = path -- If no slash found, return original path
+                    end
+                    vim.cmd("silent !start explorer " .. p)
+                end,
+            },
+            window = {
+                mappings = {
+                    ["<space>"] = "none", -- Disable space to avoid conflicts
+                    ["l"] = "open",
+                    ["h"] = "close_node",
+                },
+                width = "100%", -- Full width
+                height = "100%", -- Full height
+            },
+        })
+
+        -- Autocommand to open Neo-tree on startup
+        vim.api.nvim_create_autocmd("VimEnter", {
+            callback = function()
+                vim.cmd("Neotree toggle")
+            end,
+        })
+    end,
+    keys = {
+        { "<leader>fe", "<cmd>Neotree toggle<cr>", desc = "Toggle NeoTree" },
     },
-  },
 }
