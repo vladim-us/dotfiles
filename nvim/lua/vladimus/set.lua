@@ -32,3 +32,5 @@ vim.opt.colorcolumn = "80"
 vim.wo.number = true
 vim.g.netrw_liststyle = 1
 vim.opt.clipboard = "unnamedplus"
+-- then you need to set the option below.
+vim.g.lazyvim_picker = "fzf"
