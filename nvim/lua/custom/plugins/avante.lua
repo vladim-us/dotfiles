@@ -8,13 +8,11 @@ return {
   ---@module 'avante'
   ---@type avante.Config
   opts = {
-    -- add any opts here
-    -- for example
     provider = 'ollama',
     providers = {
       ollama = {
         endpoint = 'http://localhost:11434',
-        model = 'mistral:latest',
+        model = 'llama2-uncensored:7b',
       },
     },
   },
