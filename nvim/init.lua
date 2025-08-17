@@ -365,11 +365,11 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       --vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       --vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>spf', builtin.find_files, { desc = '[S]earch [P]roject [F]iles' })
-      vim.keymap.set('n', '<leader>sgf', builtin.git_files, { desc = '[S]earch [G]it files [F]iles' })
+      -- vim.keymap.set('n', '<leader>spf', builtin.find_files, { desc = '[S]earch [P]roject [F]iles' })
+      -- vim.keymap.set('n', '<leader>sgf', builtin.git_files, { desc = '[S]earch [G]it files [F]iles' })
       -- vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       --vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>slg', builtin.live_grep, { desc = '[S]earch [L]ive [G]rep' })
+      -- vim.keymap.set('n', '<leader>slg', builtin.live_grep, { desc = '[S]earch [L]ive [G]rep' })
       --vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       --pfuim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       --vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -589,7 +589,16 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              checkOnSave = {
+                command = 'clippy',
+              },
+              formatOnSave = true,
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
