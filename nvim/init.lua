@@ -622,28 +622,28 @@ require('lazy').setup({
             },
           },
         },
-      }
-      pylsp = {
-        settings = {
-          pylsp = {
-            plugins = {
-              pyflakes = { enabled = false },
-              pycodestyle = { enabled = false },
-              autopep8 = { enabled = false },
-              yapf = { enabled = false },
-              mccabe = { enabled = false },
-              pylsp_mypy = { enabled = false },
-              pylsp_black = { enabled = false },
-              pylsp_isort = { enabled = false },
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                pyflakes = { enabled = false },
+                pycodestyle = { enabled = false },
+                autopep8 = { enabled = false },
+                yapf = { enabled = false },
+                mccabe = { enabled = false },
+                pylsp_mypy = { enabled = false },
+                pylsp_black = { enabled = false },
+                pylsp_isort = { enabled = false },
+              },
             },
           },
         },
-      }
-      basedpyright = {
-        settings = {
-          basedpyright = {
-            analysis = {
-              extraPaths = { '/Users/vladdy/Code/dagster-common' },
+        basedpyright = {
+          settings = {
+            basedpyright = {
+              analysis = {
+                extraPaths = { '/Users/vladdy/Code/dagster-common' },
+              },
             },
           },
         },
