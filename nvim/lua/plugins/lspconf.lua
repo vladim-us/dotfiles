@@ -1,6 +1,5 @@
 -- lua/plugins/lsp.lua
 -- LSP and related plugin configurations
-
 return {
   -- Mason: Tool installer for LSP servers, linters, and formatters
   {
@@ -17,7 +16,6 @@ return {
       },
     },
   },
-
   -- Mason-LSPConfig: Bridges Mason and nvim-lspconfig (v2.0+ style)
   {
     'mason-org/mason-lspconfig.nvim',
@@ -34,7 +32,6 @@ return {
       }
     end,
   },
-
   -- Mason-Null-LS: Bridges Mason and none-ls (for linters/formatters)
   {
     'jay-babu/mason-null-ls.nvim',
@@ -46,7 +43,6 @@ return {
       automatic_installation = true,
     },
   },
-
   -- None-LS: Provides LSP features for non-LSP tools (linters, formatters, etc.)
   {
     'nvimtools/none-ls.nvim',
@@ -67,7 +63,6 @@ return {
       }
     end,
   },
-
   -- LSPConfig: Core LSP client configurations
   {
     'neovim/nvim-lspconfig',
@@ -80,7 +75,6 @@ return {
     config = function()
       -- Setup capabilities (integrate with blink.cmp)
       local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('blink.cmp').get_lsp_capabilities())
-
       -- Global on_attach function
       local on_attach = function(client, bufnr)
         -- Keymaps
@@ -102,7 +96,6 @@ return {
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
         vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
         vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
-
         -- Highlight references (if illuminate is not handling it)
         if client.supports_method 'textDocument/documentHighlight' then
           vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
@@ -118,7 +111,6 @@ return {
             group = 'lsp_document_highlight',
           })
         end
-
         -- Auto-format on save (global for all clients that support it)
         if client.supports_method 'textDocument/formatting' then
           vim.api.nvim_create_autocmd('BufWritePre', {
@@ -129,13 +121,11 @@ return {
           })
         end
       end
-
       -- Global config for all servers
       vim.lsp.config('*', {
         capabilities = capabilities,
         on_attach = on_attach,
       })
-
       -- Server-specific overrides
       vim.lsp.config('lua_ls', {
         settings = {
@@ -150,10 +140,18 @@ return {
           },
         },
       })
-
+      vim.lsp.config('basedpyright', {
+        settings = {
+          basedpyright = {
+            analysis = {
+              typeCheckingMode = 'basic',
+              diagnosticMode = 'workspace',
+            },
+          },
+        },
+      })
       -- Explicit config for Ruff to suppress "config not found" warning (uses global on_attach/capabilities)
       vim.lsp.config('ruff', {})
-
       -- Diagnostic customizations
       vim.diagnostic.config {
         virtual_text = true,
@@ -163,7 +161,6 @@ return {
         severity_sort = true,
         float = { border = 'rounded' },
       }
-
       -- Custom signs for diagnostics
       local signs = { Error = '󰅚 ', Warn = '󰀪 ', Hint = '󰌶 ', Info = ' ' }
       for type, icon in pairs(signs) do
