@@ -141,17 +141,41 @@ return {
         },
       })
       vim.lsp.config('basedpyright', {
+        capabilities = capabilities,
         settings = {
           basedpyright = {
             analysis = {
-              typeCheckingMode = 'basic',
+              autoSearchPaths = true,
               diagnosticMode = 'workspace',
+              diagnosticSeverityOverrides = {
+                reportUnknownArgumentType = 'none',
+                reportUnknownParameterType = 'none',
+                reportUnknownVariableType = 'none',
+              },
+              typeCheckingMode = 'standard',
+              useLibraryCodeForTypes = true,
             },
           },
         },
       })
       -- Explicit config for Ruff to suppress "config not found" warning (uses global on_attach/capabilities)
-      vim.lsp.config('ruff', {})
+      vim.lsp.config('ruff', {
+        capabilities = capabilities, -- Explicitly pass for consistency
+        on_attach = function(client, bufnr)
+          on_attach(client, bufnr) -- Call your global on_attach for keymaps/auto-format
+          -- Disable overlaps: Let BasedPyright handle types/hovers/actions
+          client.server_capabilities.hoverProvider = false
+          client.server_capabilities.codeActionProvider = false -- Optional: If Ruff's quickfixes conflict
+        end,
+        settings = {
+          lint = {
+            enable = true, -- Explicit: Ensure linting is on (default, but clear)
+          },
+          format = {
+            enable = true, -- Explicit: Keep Ruff as the formatter
+          },
+        },
+      })
       -- Diagnostic customizations
       vim.diagnostic.config {
         virtual_text = true,
