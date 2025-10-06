@@ -35,7 +35,7 @@ vim.o.relativenumber = true
 -- MY STUFF
 vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.g.lazyvim_python_lsp = 'pylsp'
+vim.g.lazyvim_python_lsp = 'basedpyright'
 vim.opt.undodir = os.getenv 'HOME' .. '/.cache/nvim/undodir'
 vim.opt.foldlevelstart = 99
 
