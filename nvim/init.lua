@@ -1,6 +1,6 @@
 -- init.lua
 -- Main Neovim configuration entrypoint
-
+vim.opt.shell = '/bin/bash'
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 -- Make line numbers default
@@ -109,7 +109,7 @@ require('lazy').setup({
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 	'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
-	{                      -- Autocompletion
+	{                     -- Autocompletion
 		'saghen/blink.cmp',
 		event = 'VimEnter',
 		version = '1.*',
@@ -174,7 +174,7 @@ require('lazy').setup({
 	-- Highlight todo, notes, etc in comments
 	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-	{ import = 'custom.plugins' },
+	{ import = 'plugins' },
 }, {
 	ui = {
 		icons = vim.g.have_nerd_font and {} or {
