@@ -1,4 +1,4 @@
 return {
-	'tpope/vim-vinegar',
-	enabled = false,
+  'tpope/vim-vinegar',
+  enabled = true,
 }
