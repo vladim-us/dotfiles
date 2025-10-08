@@ -64,24 +64,25 @@ return {
       -- Global on_attach function
       local on_attach = function(client, bufnr)
         -- Keymaps
-        local opts = { buffer = bufnr, noremap = true, silent = true }
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-        vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-        vim.keymap.set('n', '<leader>wl', function()
-          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end, opts)
-        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-        vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+        local bufopts = { buffer = bufnr, noremap = true, silent = true }
+        vim.keymap.set('n', 'gtd', vim.lsp.buf.definition, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o Definition' }))
+        vim.keymap.set('n', 'gtD', vim.lsp.buf.declaration, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [D]eclaration' }))
+        vim.keymap.set('n', 'gti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
+        vim.keymap.set('n', 'gtr', vim.lsp.buf.references, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
+        vim.keymap.set('n', 'gtt', vim.lsp.buf.type_definition, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
+        vim.keymap.set('n', 'gh', vim.lsp.buf.hover, vim.tbl_extend('force', bufopts, { desc = 'Code [H]over' }))
+        vim.keymap.set('n', 'gr', vim.lsp.buf.rename, vim.tbl_extend('force', bufopts, { desc = 'Code [R]ename' }))
+        vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, vim.tbl_extend('force', bufopts, { desc = 'Code [A]ction' }))
+
+        -- vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+        -- vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+        -- vim.keymap.set('n', '<leader>wl', function()
+        --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        -- end, opts)
+        -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+        -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+        -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+        -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
         -- Highlight references (if illuminate is not handling it)
         if client.supports_method 'textDocument/documentHighlight' then
           vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
@@ -144,10 +145,24 @@ return {
       vim.lsp.config('ruff', {
         capabilities = capabilities, -- Explicitly pass for consistency
         on_attach = function(client, bufnr)
-          on_attach(client, bufnr) -- Call your global on_attach for keymaps/auto-format
-          -- Disable overlaps: Let BasedPyright handle types/hovers/actions
+          on_attach(client, bufnr) -- Call your global on_attach for keymaps/etc.
+          -- Disable overlaps: Let BasedPyright handle hovers (but *enable* code actions for fixes/imports)
           client.server_capabilities.hoverProvider = false
-          client.server_capabilities.codeActionProvider = false -- Optional: If Ruff's quickfixes conflict
+          -- Removed: client.server_capabilities.codeActionProvider = false
+          -- Auto-fix lint issues (incl. import sorting) on save
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            callback = function()
+              vim.lsp.buf.code_action {
+                context = {
+                  only = { 'source.fixAll.ruff' },
+                },
+                apply = true,
+              }
+              -- Optional: Force sync format after fixes (helps with any async timing)
+              vim.lsp.buf.format { async = false }
+            end,
+          })
         end,
         settings = {
           lint = {
