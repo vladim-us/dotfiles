@@ -26,7 +26,7 @@ return {
           'lua_ls',
           'basedpyright',
           'rust_analyzer',
-          'ruff', -- Add for Ruff LSP (handles Python linting/formatting)
+          'ruff',
         },
         automatic_enable = true, -- Auto-enables installed servers
       }
@@ -70,9 +70,9 @@ return {
         vim.keymap.set('n', 'gti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
         vim.keymap.set('n', 'gtr', vim.lsp.buf.references, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
         vim.keymap.set('n', 'gtt', vim.lsp.buf.type_definition, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
-        vim.keymap.set('n', 'gh', vim.lsp.buf.hover, vim.tbl_extend('force', bufopts, { desc = 'Code [H]over' }))
-        vim.keymap.set('n', 'gr', vim.lsp.buf.rename, vim.tbl_extend('force', bufopts, { desc = 'Code [R]ename' }))
-        vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, vim.tbl_extend('force', bufopts, { desc = 'Code [A]ction' }))
+        vim.keymap.set('n', 'gdh', vim.lsp.buf.hover, vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
+        vim.keymap.set('n', 'gdr', vim.lsp.buf.rename, vim.tbl_extend('force', bufopts, { desc = '[D]o [R]ename' }))
+        vim.keymap.set('n', 'gda', vim.lsp.buf.code_action, vim.tbl_extend('force', bufopts, { desc = '[D]o [A]ction' }))
 
         -- vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
         -- vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
