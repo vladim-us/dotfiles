@@ -1,4 +1,5 @@
-return { -- Autocompletion
+return {
+  -- Autocompletion
   'saghen/blink.cmp',
   event = 'VimEnter',
   version = '1.*',
@@ -19,6 +20,16 @@ return { -- Autocompletion
       dependencies = {},
       opts = {},
     },
+    -- Codeium (Windsurf) integration
+    {
+      'Exafunction/windsurf.nvim',
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+      },
+      config = function()
+        require('codeium').setup {}
+      end,
+    },
   },
   --- @module 'blink.cmp'
   --- @type blink.cmp.Config
@@ -26,18 +37,17 @@ return { -- Autocompletion
     keymap = {
       preset = 'default',
     },
-
     appearance = {
       nerd_font_variant = 'mono',
     },
-
     completion = {
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
     },
-
     sources = {
-      default = { 'lsp', 'path', 'snippets' },
-      providers = {},
+      default = { 'lsp', 'path', 'snippets', 'codeium' }, -- Added 'codeium' here
+      providers = {
+        codeium = { name = 'Codeium', module = 'codeium.blink', async = true }, -- Added provider config
+      },
     },
     snippets = { preset = 'luasnip' },
     fuzzy = { implementation = 'lua' },

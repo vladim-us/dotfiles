@@ -1,7 +1,6 @@
 return {
   {
     'nvim-neo-tree/neo-tree.nvim',
-    -- enabled = false,
     branch = 'v3.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -40,6 +39,21 @@ return {
           end
         end
       end
+
+      -- Grug-far integration
+      local function open_grug_far(prefills)
+        local grug_far = require 'grug-far'
+
+        if not grug_far.has_instance 'explorer' then
+          grug_far.open { instanceName = 'explorer' }
+        else
+          grug_far.get_instance('explorer'):open()
+        end
+        -- doing it seperately because multiple paths doesn't open work when passed with open
+        -- updating the prefills without clearing the search and other fields
+        grug_far.get_instance('explorer'):update_input_values(prefills, false)
+      end
+
       local renderer = require 'neo-tree.ui.renderer'
       -- Expand a node and load filesystem info if needed.
       local function open_dir(state, dir_node)
@@ -211,9 +225,51 @@ return {
         vim.b.neotree_depthlevel = max_depth
         redraw_after_depthlevel_change(state, false)
       end
+
       require('neo-tree').setup {
         commands = {
           diff_files = diff_files,
+          system_open = function(state)
+            local node = state.tree:get_node()
+            local path = node:get_id()
+            -- macOs: open file in default application in the background.
+            vim.fn.jobstart({ 'open', path }, { detach = true })
+            -- Linux: open file in default application
+            vim.fn.jobstart({ 'xdg-open', path }, { detach = true })
+            -- Windows: Without removing the file from the path, it opens in code.exe instead of explorer.exe
+            local p
+            local lastSlashIndex = path:match '^.+()\\[^\\]*$' -- Match the last slash and everything before it
+            if lastSlashIndex then
+              p = path:sub(1, lastSlashIndex - 1) -- Extract substring before the last slash
+            else
+              p = path -- If no slash found, return original path
+            end
+            vim.cmd('silent !start explorer ' .. p)
+          end,
+          -- Grug-far commands
+          grug_far_replace = function(state)
+            local node = state.tree:get_node()
+            local prefills = {
+              -- also escape the paths if space is there
+              -- if you want files to be selected, use ':p' only, see filename-modifiers
+              paths = node.type == 'directory' and vim.fn.fnameescape(vim.fn.fnamemodify(node:get_id(), ':p'))
+                or vim.fn.fnameescape(vim.fn.fnamemodify(node:get_id(), ':h')),
+            }
+            open_grug_far(prefills)
+          end,
+          -- https://github.com/nvim-neo-tree/neo-tree.nvim/blob/fbb631e818f48591d0c3a590817003d36d0de691/doc/neo-tree.txt#L535
+          grug_far_replace_visual = function(state, selected_nodes, callback)
+            local paths = {}
+            for _, node in pairs(selected_nodes) do
+              -- also escape the paths if space is there
+              -- if you want files to be selected, use ':p' only, see filename-modifiers
+              local path = node.type == 'directory' and vim.fn.fnameescape(vim.fn.fnamemodify(node:get_id(), ':p'))
+                or vim.fn.fnameescape(vim.fn.fnamemodify(node:get_id(), ':h'))
+              table.insert(paths, path)
+            end
+            local prefills = { paths = table.concat(paths, '\n') }
+            open_grug_far(prefills)
+          end,
         },
         window = {
           mappings = {
@@ -223,7 +279,7 @@ return {
         filesystem = {
           window = {
             mappings = {
-              ['z'] = 'none',
+              ['zz'] = 'grug_far_replace', -- Now maps 'z' to grug-far instead of 'none'
               ['zo'] = neotree_zo,
               ['zO'] = neotree_zO,
               ['zc'] = neotree_zc,
@@ -236,7 +292,21 @@ return {
               ['zM'] = neotree_zM,
               ['zr'] = neotree_zr,
               ['zR'] = neotree_zR,
+              ['o'] = 'system_open',
             },
+          },
+        },
+        keys = {
+          {
+            '<leader>r',
+            function()
+              require('neo-tree.command').execute {
+                toggle = true,
+                source = 'buffers',
+                position = 'left',
+              }
+            end,
+            desc = 'Buffers (root dir)',
           },
         },
       }
