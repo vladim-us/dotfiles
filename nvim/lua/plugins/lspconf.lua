@@ -32,6 +32,23 @@ return {
       }
     end,
   },
+  -- LSP Saga: Improves Neovim LSP experience with UI enhancements
+  {
+    'nvimdev/lspsaga.nvim',
+    event = 'LspAttach',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {
+      ui = {
+        border = 'rounded',
+      },
+    },
+    config = function(_, opts)
+      require('lspsaga').setup(opts)
+    end,
+  },
   -- Conform: Dedicated async formatter
   {
     'stevearc/conform.nvim',
@@ -57,6 +74,7 @@ return {
       'mason-org/mason.nvim',
       'mason-org/mason-lspconfig.nvim',
       'saghen/blink.cmp', -- For capabilities, since you use blink.cmp
+      'nvimdev/lspsaga.nvim',
     },
     config = function()
       -- Setup capabilities (integrate with blink.cmp)
@@ -65,40 +83,38 @@ return {
       local on_attach = function(client, bufnr)
         -- Keymaps
         local bufopts = { buffer = bufnr, noremap = true, silent = true }
-        vim.keymap.set('n', 'gtd', vim.lsp.buf.definition, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o Definition' }))
-        vim.keymap.set('n', 'gtD', vim.lsp.buf.declaration, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [D]eclaration' }))
-        vim.keymap.set('n', 'gti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
-        vim.keymap.set('n', 'gtr', vim.lsp.buf.references, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
-        vim.keymap.set('n', 'gtt', vim.lsp.buf.type_definition, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
-        vim.keymap.set('n', 'gdh', vim.lsp.buf.hover, vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
-        vim.keymap.set('n', 'gdr', vim.lsp.buf.rename, vim.tbl_extend('force', bufopts, { desc = '[D]o [R]ename' }))
-        vim.keymap.set('n', 'gda', vim.lsp.buf.code_action, vim.tbl_extend('force', bufopts, { desc = '[D]o [A]ction' }))
+        -- Go-tos
+        vim.keymap.set('n', 'gtd', '<cmd>Lspsaga goto_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o Definition' }))
+        vim.keymap.set('n', 'gtD', '<cmd>Lspsaga goto_declaration<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [D]eclaration' }))
 
-        -- vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-        -- vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-        -- vim.keymap.set('n', '<leader>wl', function()
-        --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        -- end, opts)
-        -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-        -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-        -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-        -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
-        -- Highlight references (if illuminate is not handling it)
-        if client.supports_method 'textDocument/documentHighlight' then
-          vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
-          vim.api.nvim_clear_autocmds { buffer = bufnr, group = 'lsp_document_highlight' }
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            callback = vim.lsp.buf.document_highlight,
-            buffer = bufnr,
-            group = 'lsp_document_highlight',
-          })
-          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            callback = vim.lsp.buf.clear_references,
-            buffer = bufnr,
-            group = 'lsp_document_highlight',
-          })
-        end
-        -- Removed auto-format on save: Handled by conform.nvim
+        vim.keymap.set('n', 'gtt', '<cmd>Lspsaga goto_type_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
+        vim.keymap.set('n', 'gti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
+        -- Go and Show
+        vim.keymap.set('n', '<leader>dsc', '<cmd>Lspsaga show_cursor_diagnostics<CR>', bufopts)
+        --
+        vim.keymap.set(
+          'n',
+          '<leader>dw',
+          '<cmd>Lspsaga show_workspace_diagnostics<CR>',
+          vim.tbl_extend('force', bufopts, { desc = 'Show Workspace Diagnostics' })
+        )
+        -- Go and Do
+        vim.keymap.set('n', 'gdr', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [R]ename' }))
+        vim.keymap.set('n', 'gda', '<cmd>Lspsaga code_action<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [A]ction' }))
+
+        vim.keymap.set('n', '[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', bufopts)
+        vim.keymap.set('n', ']d', '<cmd>Lspsaga diagnostic_jump_next<CR>', bufopts)
+
+        vim.keymap.set('n', 'gtr', '<cmd>Lspsaga lsp_finder<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
+        vim.keymap.set('n', 'gdh', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
+        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, bufopts)
+        -- Inside on_attach(client, bufnr)
+        vim.keymap.set('n', 'K', '<cmd>Lspsaga signature_help<CR>', vim.tbl_extend('force', bufopts, { desc = 'Signature [H]elp' }))
+        vim.keymap.set('n', 'gpd', '<cmd>Lspsaga preview_definition<CR>', vim.tbl_extend('force', bufopts, { desc = '[G]o [P]review Definition' }))
+        vim.keymap.set('n', '<leader>dl', '<cmd>Lspsaga show_line_diagnostics<CR>', vim.tbl_extend('force', bufopts, { desc = 'Show Line Diagnostics' }))
+        -- vim.keymap.set('n', '<leader>o', '<cmd>Lspsaga outline<CR>', vim.tbl_extend('force', bufopts, { desc = 'Toggle [O]utline' }))
+        -- For insert-mode signature help:
+        vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', { buffer = bufnr, desc = 'Signature Help' })
       end
       -- Global config for all servers
       vim.lsp.config('*', {
@@ -182,12 +198,6 @@ return {
         severity_sort = true,
         float = { border = 'rounded' },
       }
-      -- Custom signs for diagnostics
-      -- local signs = { Error = '󰅚 ', Warn = '󰀪 ', Hint = '󰌶 ', Info = ' ' }
-      -- for type, icon in pairs(signs) do
-      --   local hl = 'DiagnosticSign' .. type
-      --   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-      -- end
     end,
   },
 }
