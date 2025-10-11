@@ -13,7 +13,7 @@ return {
           -- Optional: Add external diff highlighters (e.g., delta)
           -- require("actions-preview.highlight").delta(),
         },
-        backend = { 'telescope', 'minipick', 'snacks', 'nui' }, -- Preferred backends (telescope is default)
+        backend = { 'nui', 'telescipe', 'minipick', 'snacks' }, -- Preferred backends (telescope is default)
         telescope = vim.tbl_extend('force', require('telescope.themes').get_dropdown {}, {
           -- Customize telescope display if needed
           make_value = nil,

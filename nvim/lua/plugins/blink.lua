@@ -17,7 +17,7 @@ return {
         end
         return 'make install_jsregexp'
       end)(),
-      dependencies = {},
+      dependencies = { 'rafamadriz/friendly-snippets' },
       opts = {},
     },
     -- Codeium (Windsurf) integration
@@ -44,13 +44,13 @@ return {
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
     },
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'codeium' }, -- Added 'codeium' here
+      default = { 'lsp', 'path', 'snippets', 'buffer', 'codeium' },
       providers = {
         codeium = { name = 'Codeium', module = 'codeium.blink', async = true }, -- Added provider config
       },
     },
     snippets = { preset = 'luasnip' },
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'prefer_rust' },
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   },
