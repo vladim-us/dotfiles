@@ -71,8 +71,8 @@ return {
     keymap('n', '<leader>ft', fzf.live_grep, { desc = '[F]ind [T]ext' })
     -- keymap('n', '<leader>fd', fzf.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
     keymap('n', '<leader>fr', fzf.resume, { desc = '[F]ind [R]esume' })
-    -- keymap('n', '<leader>fo', fzf.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-    -- keymap('n', '<leader>qf', fzf.quickfix, { desc = 'Show quick fix list' })
+    keymap('n', '<leader>fo', fzf.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+    -- keymap('n', '<leader>fq', fzf.quickfix, { desc = 'Show quick fix list' })
     -- keymap('n', '<leader>ft', function()
     -- 	fzf.grep { cmd = 'rg --column --line-number', search = 'TODO', prompt = 'Todos> ' }
     -- end, { desc = 'Find todos' })
