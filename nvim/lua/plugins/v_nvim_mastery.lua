@@ -53,6 +53,7 @@ return {
   },
   {
     'tris203/precognition.nvim',
+    enabled = false,
     --event = "VeryLazy",
     opts = {
       -- startVisible = true,
@@ -87,6 +88,12 @@ return {
     dependencies = { 'MunifTanjim/nui.nvim' },
     opts = {
       disable_mouse = false,
+      disabled_keys = {
+        ['<Up>'] = { '', 'n' },
+        ['<Down>'] = { '', 'n' },
+        ['<Left>'] = { '', 'n' },
+        ['<Right>'] = { '', 'n' },
+      },
     },
   },
   {

@@ -1,4 +1,3 @@
--- LSP and related plugin configurations
 return {
   -- Mason: Tool installer for LSP servers, linters, and formatters
   {

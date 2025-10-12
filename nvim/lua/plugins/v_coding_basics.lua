@@ -1,0 +1,105 @@
+return {
+  {
+    -- highlight same tokens in files not caught by LSP
+    'RRethy/vim-illuminate',
+  },
+  {
+    'smjonas/inc-rename.nvim',
+    opts = {},
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    main = 'nvim-treesitter.configs',
+    opts = {
+      -- Broader parsers; swap "maintained" for "all" if you want everything
+      ensure_installed = {
+        'nu',
+        'python',
+        'rust',
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+      },
+      auto_install = true,
+      highlight = {
+        enable = true,
+        -- Disable for large files to avoid perf hits
+        disable = function(lang, buf)
+          local max_filesize = 100 * 1024 -- 100KB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
+            return true
+          end
+        end,
+        additional_vim_regex_highlighting = false, -- Drop Ruby fallback; Tree-sitter handles it
+      },
+      indent = {
+        enable = true,
+        disable = { 'ruby', 'python', 'c' }, -- Extend if needed
+      },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<C-space>', -- Or your preferred (defaults: gnn, etc.)
+          node_incremental = '<C-space>',
+          scope_incremental = false,
+          node_decremental = false,
+        },
+      },
+    },
+    config = function()
+      -- Folding setup (add to your init.lua or here)
+      vim.opt.foldmethod = 'expr'
+      vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+      vim.opt.foldlevel = 99 -- Start unfolded
+    end,
+  },
+
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>qx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>qX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>qs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>ql',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        '<leader>qL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        '<leader>q',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
+    },
+  },
+}
