@@ -21,10 +21,14 @@ return {
   {
     'smjonas/inc-rename.nvim',
     opts = {
-      hl_group = 'Substitute', -- Default, but customizable
-      preview_empty_name = true, -- Preview even if new name is empty
+      hl_group = 'Substitute',
+      preview_empty_name = true,
       show_message = true,
-      input_buffer_type = nil, -- Set to 'dressing' if you install dressing.nvim
+      input_buffer_type = nil, -- Or 'dressing' if you add it
+      -- New: Post-hook to refresh lspsaga after rename
+      post_hook = function()
+        require('lspsaga').init_lsp_saga() -- Or custom refresh if needed
+      end,
     },
     keys = {
       {
@@ -33,7 +37,7 @@ return {
           return ':IncRename ' .. vim.fn.expand '<cword>'
         end,
         expr = true,
-        desc = 'Incremental Rename',
+        desc = 'Incremental Rename (with Preview)',
       },
     },
   },
@@ -111,23 +115,40 @@ return {
 
   {
     'folke/trouble.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' }, -- For icons
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
-      icons = true, -- Enable for better visuals (requires patched font)
-      auto_preview = true, -- Preview on hover
-      modes = { -- Custom modes
+      icons = true,
+      auto_preview = true,
+      modes = {
+        -- Your existing modes...
         lsp_incoming_calls = { mode = 'lsp_incoming_calls', focus = false },
         lsp_outgoing_calls = { mode = 'lsp_outgoing_calls', focus = false },
+        -- New: Treesitter-based symbols mode
+        treesitter_symbols = {
+          desc = 'Treesitter Symbols (Fallback for non-LSP)',
+          mode = 'symbols', -- Base on symbols mode
+          win = { position = 'right' },
+          filter = {
+            any = {
+              kind = { 'Class', 'Function', 'Method', 'Interface', 'Module', 'Property' }, -- Treesitter kinds
+            },
+          },
+          format = '{kind_icon}{symbol.name:Normal}', -- Display with icons
+          -- Use Treesitter for parsing (trouble falls back if no LSP)
+        },
       },
     },
     cmd = 'Trouble',
     keys = {
-      { '<leader>lqx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' }, -- Prefix with <leader>l for LSP consistency
+      -- Your existing keys...
+      { '<leader>lqx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' },
       { '<leader>lqX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', desc = 'Buffer Diagnostics (Trouble)' },
       { '<leader>lqs', '<cmd>Trouble symbols toggle focus=false<cr>', desc = 'Symbols (Trouble)' },
       { '<leader>lql', '<cmd>Trouble lsp toggle focus=false win.position=right<cr>', desc = 'LSP Definitions / references / ... (Trouble)' },
       { '<leader>lqL', '<cmd>Trouble loclist toggle<cr>', desc = 'Location List (Trouble)' },
-      { '<leader>lqQ', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' }, -- Renamed for clarity
+      { '<leader>lqQ', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' },
+      -- New: Key for Treesitter symbols
+      { '<leader>lqt', '<cmd>Trouble treesitter_symbols toggle focus=false win.position=right<cr>', desc = 'Treesitter Symbols (Trouble)' },
     },
   },
 }

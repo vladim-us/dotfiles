@@ -1,5 +1,5 @@
 require 'options'
-
+-- todo bla
 local themes = { 'rose-pine', 'melange', 'everforest' }
 local current_theme_index = 1
 
