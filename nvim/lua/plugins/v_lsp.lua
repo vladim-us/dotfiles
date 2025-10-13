@@ -20,6 +20,75 @@ return {
     'mason-org/mason-lspconfig.nvim',
     dependencies = { 'mason-org/mason.nvim', 'neovim/nvim-lspconfig', 'saghen/blink.cmp' },
     config = function()
+      local lspconfig = require 'lspconfig'
+      local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('blink.cmp').get_lsp_capabilities())
+
+      -- Global on_attach function
+      local on_attach = function(client, bufnr)
+        -- Keymaps with <leader>l prefix
+        local bufopts = { buffer = bufnr, noremap = true, silent = true }
+        -- Go-tos
+        vim.keymap.set('n', '<leader>lgtd', '<cmd>Lspsaga goto_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o Definition' }))
+        vim.keymap.set('n', '<leader>lgtD', '<cmd>Lspsaga goto_declaration<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [D]eclaration' }))
+
+        vim.keymap.set('n', '<leader>lgtt', '<cmd>Lspsaga goto_type_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
+        vim.keymap.set('n', '<leader>lgti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
+        -- Go and Show
+        vim.keymap.set('n', '<leader>ldsc', '<cmd>Lspsaga show_cursor_diagnostics<CR>', bufopts)
+        --
+        vim.keymap.set(
+          'n',
+          '<leader>ldw',
+          '<cmd>Lspsaga show_workspace_diagnostics<CR>',
+          vim.tbl_extend('force', bufopts, { desc = 'Show Workspace Diagnostics' })
+        )
+        -- Go and Do
+        vim.keymap.set('n', '<leader>lgdr', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [R]ename' }))
+        vim.keymap.set('n', '<leader>lgda', '<cmd>Lspsaga code_action<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [A]ction' }))
+
+        vim.keymap.set('n', '<leader>l[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', bufopts)
+        vim.keymap.set('n', '<leader>l]d', '<cmd>Lspsaga diagnostic_jump_next<CR>', bufopts)
+
+        vim.keymap.set('n', '<leader>lgtr', '<cmd>Lspsaga lsp_finder<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
+        vim.keymap.set('n', '<leader>lgdh', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
+        vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, bufopts)
+        -- Inside on_attach(client, bufnr)
+        vim.keymap.set('n', '<leader>lK', '<cmd>Lspsaga signature_help<CR>', vim.tbl_extend('force', bufopts, { desc = 'Signature [H]elp' }))
+        vim.keymap.set('n', '<leader>lgpd', '<cmd>Lspsaga preview_definition<CR>', vim.tbl_extend('force', bufopts, { desc = '[G]o [P]review Definition' }))
+        vim.keymap.set('n', '<leader>ldl', '<cmd>Lspsaga show_line_diagnostics<CR>', vim.tbl_extend('force', bufopts, { desc = 'Show Line Diagnostics' }))
+        -- vim.keymap.set('n', '<leader>lo', '<cmd>Lspsaga outline<CR>', vim.tbl_extend('force', bufopts, { desc = 'Toggle [O]utline' }))
+        -- For insert-mode signature help:
+        vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', { buffer = bufnr, desc = 'Signature Help' })
+
+        -- Enable inlay hints
+        if vim.lsp.inlay_hint then
+          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        end
+        -- Bonus keymap for toggling inlay hints
+        vim.keymap.set('n', '<leader>lih', function()
+          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr })
+        end, { buffer = bufnr, desc = 'Toggle [I]nlay [H]ints' })
+      end
+
+      -- Custom signs
+      vim.fn.sign_define('DiagnosticSignError', { text = '', texthl = 'DiagnosticSignError' })
+      vim.fn.sign_define('DiagnosticSignWarn', { text = '', texthl = 'DiagnosticSignWarn' })
+      vim.fn.sign_define('DiagnosticSignInfo', { text = '', texthl = 'DiagnosticSignInfo' })
+      vim.fn.sign_define('DiagnosticSignHint', { text = '󰌵', texthl = 'DiagnosticSignHint' })
+
+      -- Diagnostic customizations
+      vim.diagnostic.config {
+        virtual_text = {
+          prefix = '● ', -- Custom prefix for inline diagnostics
+          spacing = 4,
+        },
+        signs = true,
+        update_in_insert = false,
+        underline = true,
+        severity_sort = true,
+        float = { border = 'rounded' },
+      }
+
       require('mason-lspconfig').setup {
         ensure_installed = {
           'lua_ls',
@@ -28,6 +97,72 @@ return {
           'ruff',
         },
         automatic_enable = true, -- Auto-enables installed servers
+        handlers = {
+          -- Default handler for all servers (applies global config)
+          function(server_name)
+            lspconfig[server_name].setup {
+              capabilities = capabilities,
+              on_attach = on_attach,
+            }
+          end,
+          -- Server-specific overrides
+          ['lua_ls'] = function()
+            lspconfig.lua_ls.setup {
+              capabilities = capabilities,
+              on_attach = on_attach,
+              settings = {
+                Lua = {
+                  runtime = { version = 'LuaJIT' },
+                  diagnostics = { globals = { 'vim' } },
+                  workspace = {
+                    library = vim.api.nvim_get_runtime_file('', true),
+                    checkThirdParty = false,
+                  },
+                  telemetry = { enable = false },
+                },
+              },
+            }
+          end,
+          ['basedpyright'] = function()
+            lspconfig.basedpyright.setup {
+              capabilities = capabilities,
+              on_attach = on_attach,
+              settings = {
+                basedpyright = {
+                  analysis = {
+                    autoSearchPaths = true,
+                    diagnosticMode = 'workspace',
+                    diagnosticSeverityOverrides = {
+                      reportUnknownArgumentType = 'none',
+                      reportUnknownParameterType = 'none',
+                      reportUnknownVariableType = 'none',
+                    },
+                    typeCheckingMode = 'standard',
+                    useLibraryCodeForTypes = true,
+                    extraPaths = {
+                      '/home/v/Code/work/forecast-store-product-feature-table-pipeline/__pypackages__/3.11/lib',
+                      '/home/v/Code/work/dagster-common',
+                    },
+                  },
+                },
+              },
+            }
+          end,
+          ['ruff'] = function()
+            lspconfig.ruff.setup {
+              capabilities = capabilities,
+              on_attach = function(client, bufnr)
+                on_attach(client, bufnr)
+                client.server_capabilities.hoverProvider = false
+                client.server_capabilities.documentFormattingProvider = false -- Let Conform handle all formatting
+              end,
+              settings = {
+                lint = { enable = true },
+                format = { enable = true },
+              },
+            }
+          end,
+        },
       }
     end,
   },
@@ -43,6 +178,8 @@ return {
       ui = {
         border = 'rounded',
       },
+      lightbulb = { enable = true },
+      symbol_in_winbar = { enable = true },
     },
     config = function(_, opts)
       require('lspsaga').setup(opts)
@@ -55,7 +192,7 @@ return {
     opts = {
       formatters_by_ft = {
         lua = { 'stylua' }, -- Replaces none-ls stylua
-        python = { 'ruff_format' }, -- Explicit for Ruff CLI; fallback to LSP
+        python = { 'ruff_fix', 'ruff_format' }, -- Run fixes first, then format
         rust = { 'rustfmt' }, -- CLI fallback to rust_analyzer
       },
       format_on_save = {
@@ -75,128 +212,5 @@ return {
       'saghen/blink.cmp', -- For capabilities, since you use blink.cmp
       'nvimdev/lspsaga.nvim',
     },
-    config = function()
-      -- Setup capabilities (integrate with blink.cmp)
-      local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('blink.cmp').get_lsp_capabilities())
-      -- Global on_attach function
-      local on_attach = function(client, bufnr)
-        -- Keymaps
-        local bufopts = { buffer = bufnr, noremap = true, silent = true }
-        -- Go-tos
-        vim.keymap.set('n', 'gtd', '<cmd>Lspsaga goto_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o Definition' }))
-        vim.keymap.set('n', 'gtD', '<cmd>Lspsaga goto_declaration<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [D]eclaration' }))
-
-        vim.keymap.set('n', 'gtt', '<cmd>Lspsaga goto_type_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [T]ype definition' }))
-        vim.keymap.set('n', 'gti', vim.lsp.buf.implementation, vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [I]mplementation' }))
-        -- Go and Show
-        vim.keymap.set('n', '<leader>dsc', '<cmd>Lspsaga show_cursor_diagnostics<CR>', bufopts)
-        --
-        vim.keymap.set(
-          'n',
-          '<leader>dw',
-          '<cmd>Lspsaga show_workspace_diagnostics<CR>',
-          vim.tbl_extend('force', bufopts, { desc = 'Show Workspace Diagnostics' })
-        )
-        -- Go and Do
-        vim.keymap.set('n', 'gdr', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [R]ename' }))
-        vim.keymap.set('n', 'gda', '<cmd>Lspsaga code_action<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [A]ction' }))
-
-        vim.keymap.set('n', '[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', bufopts)
-        vim.keymap.set('n', ']d', '<cmd>Lspsaga diagnostic_jump_next<CR>', bufopts)
-
-        vim.keymap.set('n', 'gtr', '<cmd>Lspsaga lsp_finder<CR>', vim.tbl_extend('force', bufopts, { desc = 'Go [T]o [R]eferences' }))
-        vim.keymap.set('n', 'gdh', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
-        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, bufopts)
-        -- Inside on_attach(client, bufnr)
-        vim.keymap.set('n', 'K', '<cmd>Lspsaga signature_help<CR>', vim.tbl_extend('force', bufopts, { desc = 'Signature [H]elp' }))
-        vim.keymap.set('n', 'gpd', '<cmd>Lspsaga preview_definition<CR>', vim.tbl_extend('force', bufopts, { desc = '[G]o [P]review Definition' }))
-        vim.keymap.set('n', '<leader>dl', '<cmd>Lspsaga show_line_diagnostics<CR>', vim.tbl_extend('force', bufopts, { desc = 'Show Line Diagnostics' }))
-        -- vim.keymap.set('n', '<leader>o', '<cmd>Lspsaga outline<CR>', vim.tbl_extend('force', bufopts, { desc = 'Toggle [O]utline' }))
-        -- For insert-mode signature help:
-        vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', { buffer = bufnr, desc = 'Signature Help' })
-      end
-      -- Global config for all servers
-      vim.lsp.config('*', {
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-      -- Server-specific overrides
-      vim.lsp.config('lua_ls', {
-        settings = {
-          Lua = {
-            runtime = { version = 'LuaJIT' },
-            diagnostics = { globals = { 'vim' } },
-            workspace = {
-              library = vim.api.nvim_get_runtime_file('', true),
-              checkThirdParty = false,
-            },
-            telemetry = { enable = false },
-          },
-        },
-      })
-      vim.lsp.config('basedpyright', {
-        capabilities = capabilities,
-        settings = {
-          basedpyright = {
-            analysis = {
-              autoSearchPaths = true,
-              diagnosticMode = 'workspace',
-              diagnosticSeverityOverrides = {
-                reportUnknownArgumentType = 'none',
-                reportUnknownParameterType = 'none',
-                reportUnknownVariableType = 'none',
-              },
-              typeCheckingMode = 'standard',
-              useLibraryCodeForTypes = true,
-              extraPaths = {
-                '/home/v/Code/work/forecast-store-product-feature-table-pipeline/__pypackages__/3.11/lib',
-                '/home/v/Code/work/dagster-common',
-              },
-            },
-          },
-        },
-      })
-      -- Explicit config for Ruff to suppress "config not found" warning (uses global on_attach/capabilities)
-      vim.lsp.config('ruff', {
-        capabilities = capabilities, -- Explicitly pass for consistency
-        on_attach = function(client, bufnr)
-          on_attach(client, bufnr) -- Call your global on_attach for keymaps/etc.
-          -- Disable overlaps: Let BasedPyright handle hovers (but *enable* code actions for fixes/imports)
-          client.server_capabilities.hoverProvider = false
-          -- Removed: client.server_capabilities.codeActionProvider = false
-          -- Auto-fix lint issues (incl. import sorting) on save
-          vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = bufnr,
-            callback = function()
-              vim.lsp.buf.code_action {
-                context = {
-                  only = { 'source.fixAll.ruff' },
-                },
-                apply = true,
-              }
-              -- Optional: Force sync format after fixes (helps with any async timing)
-              vim.lsp.buf.format { async = false }
-            end,
-          })
-        end,
-        settings = {
-          lint = {
-            enable = true, -- Explicit: Ensure linting is on (default, but clear)
-          },
-          format = {
-            enable = true, -- Explicit: Keep Ruff as the formatter
-          },
-        },
-      })
-      -- Diagnostic customizations
-      vim.diagnostic.config {
-        virtual_text = true,
-        signs = true,
-        update_in_insert = false,
-        underline = true,
-        severity_sort = true,
-        float = { border = 'rounded' },
-      }
-    end,
   },
 }

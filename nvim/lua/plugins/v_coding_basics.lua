@@ -1,19 +1,51 @@
 return {
   {
-    -- highlight same tokens in files not caught by LSP
     'RRethy/vim-illuminate',
+    opts = {
+      providers = { 'lsp', 'treesitter', 'regex' }, -- Prioritize LSP/Treesitter for accuracy
+      delay = 100, -- Default, but adjustable for snappier feel (e.g., 50ms)
+      filetypes_denylist = { 'dirvish', 'fugitive', 'NvimTree' }, -- Add more if you have file explorers
+      under_cursor = true,
+      large_file_cutoff = 10000, -- Disable for large files to avoid slowdown
+      large_file_overrides = nil, -- Fully disable for large files
+      min_count_to_highlight = 1,
+    },
+    config = function(_, opts)
+      require('illuminate').configure(opts)
+      -- Custom highlights (add to your colorscheme or here)
+      vim.api.nvim_set_hl(0, 'IlluminatedWordText', { underline = true })
+      vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { underline = true })
+      vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { underline = true, bold = true })
+    end,
   },
   {
     'smjonas/inc-rename.nvim',
-    opts = {},
+    opts = {
+      hl_group = 'Substitute', -- Default, but customizable
+      preview_empty_name = true, -- Preview even if new name is empty
+      show_message = true,
+      input_buffer_type = nil, -- Set to 'dressing' if you install dressing.nvim
+    },
+    keys = {
+      {
+        '<leader>lrn',
+        function()
+          return ':IncRename ' .. vim.fn.expand '<cword>'
+        end,
+        expr = true,
+        desc = 'Incremental Rename',
+      },
+    },
   },
-
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects', -- New: For advanced selections
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
   {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     opts = {
-      -- Broader parsers; swap "maintained" for "all" if you want everything
       ensure_installed = {
         'nu',
         'python',
@@ -29,77 +61,73 @@ return {
         'query',
         'vim',
         'vimdoc',
+        'json',
+        'yaml',
+        'toml', -- New: Common config formats
       },
+      sync_install = false, -- Async for better UX during setup
       auto_install = true,
-      highlight = {
-        enable = true,
-        -- Disable for large files to avoid perf hits
-        disable = function(lang, buf)
-          local max_filesize = 100 * 1024 -- 100KB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-          if ok and stats and stats.size > max_filesize then
-            return true
-          end
-        end,
-        additional_vim_regex_highlighting = false, -- Drop Ruby fallback; Tree-sitter handles it
-      },
+      highlight = { ... }, -- Your existing
       indent = {
         enable = true,
-        disable = { 'ruby', 'python', 'c' }, -- Extend if needed
+        disable = { 'ruby', 'python', 'c' }, -- Your existing; note: Python indent is experimental, consider enabling if stable
       },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = '<C-space>', -- Or your preferred (defaults: gnn, etc.)
-          node_incremental = '<C-space>',
-          scope_incremental = false,
-          node_decremental = false,
+      incremental_selection = { ... }, -- Your existing
+      textobjects = { -- New module
+        select = {
+          enable = true,
+          lookahead = true, -- Jump to next if not under cursor
+          keymaps = {
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
+            ['ap'] = '@parameter.outer',
+            ['ip'] = '@parameter.inner',
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- Add to jumplist
+          goto_next_start = {
+            [']m'] = '@function.outer',
+            [']]'] = '@class.outer',
+          },
+          goto_previous_start = {
+            ['[m'] = '@function.outer',
+            ['[['] = '@class.outer',
+          },
         },
       },
     },
-    config = function()
-      -- Folding setup (add to your init.lua or here)
+    config = function(_, opts)
+      require('nvim-treesitter.configs').setup(opts)
+      -- Your folding setup
       vim.opt.foldmethod = 'expr'
       vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-      vim.opt.foldlevel = 99 -- Start unfolded
+      vim.opt.foldlevel = 99
     end,
   },
 
   {
     'folke/trouble.nvim',
-    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    dependencies = { 'nvim-tree/nvim-web-devicons' }, -- For icons
+    opts = {
+      icons = true, -- Enable for better visuals (requires patched font)
+      auto_preview = true, -- Preview on hover
+      modes = { -- Custom modes
+        lsp_incoming_calls = { mode = 'lsp_incoming_calls', focus = false },
+        lsp_outgoing_calls = { mode = 'lsp_outgoing_calls', focus = false },
+      },
+    },
     cmd = 'Trouble',
     keys = {
-      {
-        '<leader>qx',
-        '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Diagnostics (Trouble)',
-      },
-      {
-        '<leader>qX',
-        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-        desc = 'Buffer Diagnostics (Trouble)',
-      },
-      {
-        '<leader>qs',
-        '<cmd>Trouble symbols toggle focus=false<cr>',
-        desc = 'Symbols (Trouble)',
-      },
-      {
-        '<leader>ql',
-        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
-        desc = 'LSP Definitions / references / ... (Trouble)',
-      },
-      {
-        '<leader>qL',
-        '<cmd>Trouble loclist toggle<cr>',
-        desc = 'Location List (Trouble)',
-      },
-      {
-        '<leader>q',
-        '<cmd>Trouble qflist toggle<cr>',
-        desc = 'Quickfix List (Trouble)',
-      },
+      { '<leader>lqx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' }, -- Prefix with <leader>l for LSP consistency
+      { '<leader>lqX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', desc = 'Buffer Diagnostics (Trouble)' },
+      { '<leader>lqs', '<cmd>Trouble symbols toggle focus=false<cr>', desc = 'Symbols (Trouble)' },
+      { '<leader>lql', '<cmd>Trouble lsp toggle focus=false win.position=right<cr>', desc = 'LSP Definitions / references / ... (Trouble)' },
+      { '<leader>lqL', '<cmd>Trouble loclist toggle<cr>', desc = 'Location List (Trouble)' },
+      { '<leader>lqQ', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' }, -- Renamed for clarity
     },
   },
 }
