@@ -1,7 +1,7 @@
 return {
   {
     'aznhe21/actions-preview.nvim',
-    dependencies = { 'nvim-telescope/telescope.nvim' }, -- Required for the default backend
+    dependencies = { 'MunifTanjim/nui.nvim' },
     config = function()
       local ap = require 'actions-preview'
       ap.setup {
@@ -13,12 +13,7 @@ return {
           -- Optional: Add external diff highlighters (e.g., delta)
           -- require("actions-preview.highlight").delta(),
         },
-        backend = { 'nui', 'telescipe', 'minipick', 'snacks' }, -- Preferred backends (telescope is default)
-        telescope = vim.tbl_extend('force', require('telescope.themes').get_dropdown {}, {
-          -- Customize telescope display if needed
-          make_value = nil,
-          make_make_display = nil,
-        }),
+        backend = { 'nui', 'minipick', 'snacks' }, -- Preferred backends (telescope is default)
         nui = { -- Options for nui backend (if used)
           dir = 'col',
           keymap = nil,
