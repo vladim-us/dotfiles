@@ -95,7 +95,7 @@ return {
       require('mason-lspconfig').setup {
         ensure_installed = {
           'lua_ls',
-          'basedpyright',
+          'ty', -- Replaced basedpyright with ty
           'rust_analyzer',
           'ruff',
         },
@@ -126,26 +126,17 @@ return {
               },
             }
           end,
-          ['basedpyright'] = function()
-            lspconfig.basedpyright.setup {
+          ['ty'] = function()
+            lspconfig.ty.setup {
               capabilities = capabilities,
               on_attach = on_attach,
               settings = {
-                basedpyright = {
+                python = {
                   analysis = {
                     autoSearchPaths = true,
                     diagnosticMode = 'workspace',
-                    diagnosticSeverityOverrides = {
-                      reportUnknownArgumentType = 'none',
-                      reportUnknownParameterType = 'none',
-                      reportUnknownVariableType = 'none',
-                    },
                     typeCheckingMode = 'standard',
                     useLibraryCodeForTypes = true,
-                    extraPaths = {
-                      '/home/v/Code/work/forecast-store-product-feature-table-pipeline/__pypackages__/3.11/lib',
-                      '/home/v/Code/work/dagster-common',
-                    },
                   },
                 },
               },
