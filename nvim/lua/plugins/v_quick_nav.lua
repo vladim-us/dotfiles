@@ -141,22 +141,22 @@ return {
         end,
         desc = 'Flash Treesitter',
       },
-      {
-        'r',
-        mode = 'o',
-        function()
-          require('flash').remote()
-        end,
-        desc = 'Remote Flash',
-      },
-      {
-        'R',
-        mode = { 'o', 'x' },
-        function()
-          require('flash').treesitter_search()
-        end,
-        desc = 'Treesitter Search',
-      },
+      -- {
+      --   'r',
+      --   mode = 'o',
+      --   function()
+      --     require('flash').remote()
+      --   end,
+      --   desc = 'Remote Flash',
+      -- },
+      -- {
+      --   'R',
+      --   mode = { 'o', 'x' },
+      --   function()
+      --     require('flash').treesitter_search()
+      --   end,
+      --   desc = 'Treesitter Search',
+      -- },
       {
         '<c-s>',
         mode = { 'c' },
@@ -247,31 +247,31 @@ return {
       -- keymap('n', '<leader>fb', fzf.buffers, { desc = '[S]earch existing [B]uffers' })
       -- keymap('n', '<leader>fm', fzf.marks, { desc = '[S]earch [M]arks' })
       keymap('n', '<leader>fg', fzf.git_files, { desc = '[F]ind [G]it Files' })
-      -- keymap('n', '<leader>gc', fzf.git_commits, { desc = 'Search [G]it [C]ommits' })
-      -- keymap('n', '<leader>gcf', fzf.git_bcommits, { desc = 'Search [G]it [C]ommits for current [F]ile' })
-      -- keymap('n', '<leader>tgb', fzf.git_branches, { desc = 'Search [G]it [B]ranches' })
-      -- keymap('n', '<leader>gs', fzf.git_status, { desc = 'Search [G]it [S]tatus (diff view)' })
       keymap('n', '<leader>ff', fzf.files, { desc = '[F]ind [F]iles' })
-      -- keymap('n', '<leader>sh', fzf.help_tags, { desc = '[S]earch [H]elp' })
-      -- keymap('n', '<leader>scw', fzf.grep_cword, { desc = '[S]earch current [W]ord' })
       keymap('n', '<leader>ft', fzf.live_grep, { desc = '[F]ind [T]ext' })
-      -- keymap('n', '<leader>fd', fzf.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
       keymap('n', '<leader>fr', fzf.resume, { desc = '[F]ind [R]esume' })
       keymap('n', '<leader>fo', fzf.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      -- keymap('n', '<leader>fq', fzf.quickfix, { desc = 'Show quick fix list' })
-      -- keymap('n', '<leader>ft', function()
-      -- 	fzf.grep { cmd = 'rg --column --line-number', search = 'TODO', prompt = 'Todos> ' }
-      -- end, { desc = 'Find todos' })
       keymap('n', '<leader>fs', function()
         fzf.lsp_document_symbols {
           symbol_types = { 'Class', 'Function', 'Method', 'Constructor', 'Interface', 'Module', 'Property' },
         }
       end, { desc = '[Find] LSP [S]ymbols' })
+      -- keymap('n', '<leader>fq', fzf.quickfix, { desc = 'Show quick fix list' })
+      -- keymap('n', '<leader>gc', fzf.git_commits, { desc = 'Search [G]it [C]ommits' })
+      -- keymap('n', '<leader>gcf', fzf.git_bcommits, { desc = 'Search [G]it [C]ommits for current [F]ile' })
+      -- keymap('n', '<leader>tgb', fzf.git_branches, { desc = 'Search [G]it [B]ranches' })
+      -- keymap('n', '<leader>gs', fzf.git_status, { desc = 'Search [G]it [S]tatus (diff view)' })
+      -- keymap('n', '<leader>sh', fzf.help_tags, { desc = '[S]earch [H]elp' })
+      -- keymap('n', '<leader>scw', fzf.grep_cword, { desc = '[S]earch current [W]ord' })
+      -- keymap('n', '<leader>fd', fzf.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
+      -- keymap('n', '<leader>ft', function()
+      -- 	fzf.grep { cmd = 'rg --column --line-number', search = 'TODO', prompt = 'Todos> ' }
+      -- end, { desc = 'Find todos' })
       -- keymap('n', '<leader><leader>', fzf.buffers, { desc = 'Find existing buffers' })
       -- keymap('n', '<leader>s/', function()
       -- 	fzf.live_grep { buffers_only = true, prompt = 'Live Grep in Open Files> ' }
       -- end, { desc = '[S]earch [/] in Open Files' })
-      keymap('n', '<leader>/', function()
+      keymap('n', '/', function()
         fzf.blines { previewer = false }
       end, { desc = 'Fuzzily search in current buffer' })
     end,

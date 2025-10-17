@@ -36,7 +36,7 @@ return {
       vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder ref<CR>', vim.tbl_extend('force', bufopts, { desc = 'Goto References' }))
       vim.keymap.set({ 'n', 'v' }, '<leader>ca', '<cmd>Lspsaga code_action<CR>', vim.tbl_extend('force', bufopts, { desc = 'Code Action' }))
 
-      vim.keymap.set('n', '<leader>rn', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = 'Rename' }))
+      vim.keymap.set('n', '<leader>rnn', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = 'Rename' }))
       vim.keymap.set('n', 'gp', '<cmd>Lspsaga peek_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Peek Definition' }))
 
       vim.keymap.set('n', '<leader>[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', bufopts)
