@@ -34,36 +34,23 @@ return {
       vim.keymap.set('n', 'gt', '<cmd>Lspsaga goto_type_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Goto Type Definition' }))
       vim.keymap.set('n', 'gi', '<cmd>Lspsaga finder imp<CR>', vim.tbl_extend('force', bufopts, { desc = 'Goto Implementation' }))
       vim.keymap.set('n', 'gr', '<cmd>Lspsaga finder ref<CR>', vim.tbl_extend('force', bufopts, { desc = 'Goto References' }))
-      vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = 'Hover Documentation' }))
       vim.keymap.set({ 'n', 'v' }, '<leader>ca', '<cmd>Lspsaga code_action<CR>', vim.tbl_extend('force', bufopts, { desc = 'Code Action' }))
 
-      vim.keymap.set('n', '<leader>fa', function()
-        vim.cmd 'Lspsaga code_action' -- Run lspsaga code actions first
-        require('conform').format { lsp_format = 'fallback', async = true, timeout_ms = 500 } -- Then format
-      end, vim.tbl_extend('force', bufopts, { desc = 'Fix All (Actions + Format)' }))
-
       vim.keymap.set('n', '<leader>rn', '<cmd>Lspsaga rename<CR>', vim.tbl_extend('force', bufopts, { desc = 'Rename' }))
-      vim.keymap.set('n', '<leader>pd', '<cmd>Lspsaga peek_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Peek Definition' }))
-      --
-      vim.keymap.set('n', '<leader>gdh', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = '[D]o [H]over' }))
-      vim.keymap.set('n', '<leader>gsc', '<cmd>Lspsaga show_cursor_diagnostics<CR>', bufopts)
-      --
-      -- vim.keymap.set(
-      --   'n',
-      --   '<leader>ldw',
-      --   '<cmd>Lspsaga show_workspace_diagnostics<CR>',
-      --   vim.tbl_extend('force', bufopts, { desc = 'Show Workspace Diagnostics' })
-      -- )
+      vim.keymap.set('n', 'gp', '<cmd>Lspsaga peek_definition<CR>', vim.tbl_extend('force', bufopts, { desc = 'Peek Definition' }))
 
       vim.keymap.set('n', '<leader>[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', bufopts)
       vim.keymap.set('n', '<leader>]d', '<cmd>Lspsaga diagnostic_jump_next<CR>', bufopts)
 
-      vim.keymap.set('n', '<leader>K', '<cmd>Lspsaga signature_help<CR>', vim.tbl_extend('force', bufopts, { desc = 'Signature [H]elp' }))
-      vim.keymap.set('n', '<leader>gpd', '<cmd>Lspsaga preview_definition<CR>', vim.tbl_extend('force', bufopts, { desc = '[G]o [P]review Definition' }))
-      vim.keymap.set('n', '<leader>gdl', '<cmd>Lspsaga show_line_diagnostics<CR>', vim.tbl_extend('force', bufopts, { desc = 'Show Line Diagnostics' }))
+      vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', { buffer = bufnr, desc = 'Signature Help' })
+      vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<CR>', vim.tbl_extend('force', bufopts, { desc = 'Hover Documentation' }))
+
+      -- vim.keymap.set('n', '<leader>gsc', '<cmd>Lspsaga show_cursor_diagnostics<CR>', bufopts)
+      -- vim.keymap.set('n', '<leader>gpd', '<cmd>Lspsaga preview_definition<CR>', vim.tbl_extend('force', bufopts, { desc = '[G]o [P]review Definition' }))
+      --
+      -- vim.keymap.set('n', '<leader>gdl', '<cmd>Lspsaga show_line_diagnostics<CR>', vim.tbl_extend('force', bufopts, { desc = 'Show Line Diagnostics' }))
       -- vim.keymap.set('n', '<leader>lo', '<cmd>Lspsaga outline<CR>', vim.tbl_extend('force', bufopts, { desc = 'Toggle [O]utline' }))
       -- For insert-mode signature help:
-      vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', { buffer = bufnr, desc = 'Signature Help' })
 
       -- Enable inlay hints
       if vim.lsp.inlay_hint then
