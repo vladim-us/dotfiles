@@ -7,9 +7,11 @@ return {
     opts = {
       hide_target_hack = true,
       cursor_color = 'none',
+      stiffness = 0.8,
+      trailing_stifness = 0.5,
+      distance_stop_animating = 0.5,
     },
     specs = {
-      -- disable mini.animate cursor
       {
         'echasnovski/mini.animate',
         optional = true,
