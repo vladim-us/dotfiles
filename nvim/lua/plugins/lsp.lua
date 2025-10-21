@@ -87,7 +87,6 @@ return {
       require('mason-lspconfig').setup {
         ensure_installed = {
           'lua_ls',
-          'ty',
           'rust_analyzer',
           'ruff',
           'basedpyright',
@@ -95,11 +94,13 @@ return {
         automatic_enable = true,
         handlers = {
           function(server_name)
+            print('Default handler for: ' .. server_name)
             lspconfig[server_name].setup {
               capabilities = capabilities,
               on_attach = on_attach,
             }
           end,
+
           ['lua_ls'] = function()
             lspconfig.lua_ls.setup {
               capabilities = capabilities,
@@ -143,22 +144,22 @@ return {
               },
             }
           end,
-          ['ty'] = function()
-            lspconfig.ty.setup {
-              capabilities = capabilities,
-              on_attach = on_attach,
-              settings = {
-                python = {
-                  analysis = {
-                    autoSearchPaths = true,
-                    diagnosticMode = 'workspace',
-                    typeCheckingMode = 'standard',
-                    useLibraryCodeForTypes = true,
-                  },
-                },
-              },
-            }
-          end,
+          -- ['ty'] = function()
+          --   lspconfig.ty.setup {
+          --     capabilities = capabilities,
+          --     on_attach = on_attach,
+          --     settings = {
+          --       python = {
+          --         analysis = {
+          --           autoSearchPaths = true,
+          --           diagnosticMode = 'workspace',
+          --           typeCheckingMode = 'standard',
+          --           useLibraryCodeForTypes = true,
+          --         },
+          --       },
+          --     },
+          --   }
+          -- end,
           ['ruff'] = function()
             lspconfig.ruff.setup {
               capabilities = capabilities,
