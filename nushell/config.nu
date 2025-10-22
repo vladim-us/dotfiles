@@ -5,9 +5,9 @@
 
 $env.config.buffer_editor = "nvim"
 
-source modules/env_conf.nu
+const modules_path = $nu.config-path | path dirname | path join modules
 
-source completion.nu
-source aliases.nu
-
+source ($modules_path)/env_conf.nu
+source ($modules_path)/completion.nu
+source ($modules_path)/aliases.nu
 source ~/.zoxide.nu
