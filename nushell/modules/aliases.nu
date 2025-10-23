@@ -20,7 +20,7 @@ def v [$directory?] {
 	}
 }
 
-def vc [] {do {cd ~/.config/nvim-config/nvim; nvim ~/.config/nvim-config/nvim}}
+def vc [] {do {cd ~/.config/dotfiles; nvim ~/.config/dotfiles}}
 
 def grh [branch?: string@git_reset_hard_completer] {
 	if ($branch | is-empty) {
