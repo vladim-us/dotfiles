@@ -68,7 +68,7 @@ vim.cmd.colorscheme 'melange'
 require 'keymaps'
 
 -- Add this to your keymaps.lua file, or here if preferred
-vim.keymap.set('n', '<leader>th', switch_theme, { desc = 'Cycle theme (rose-pine -> melange -> aura-dark -> everforest -> ...)' })
+vim.keymap.set('n', '<leader>ty', switch_theme, { desc = '[T]oggle [T]heme (rose-pine -> melange -> aura-dark -> everforest -> ...)' })
 
 require('lualine').setup()
 require('actions-preview').setup()
