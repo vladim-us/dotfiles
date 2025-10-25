@@ -15,6 +15,9 @@ vim.keymap.set('n', '<A-t>', function()
   require('menu').open 'default'
 end, {})
 
+vim.keymap.set('v', '<leader>el', ':lua<CR>', { desc = '[E]xecute [L]ua' })
+vim.keymap.set('n', '<leader>es', '<cmd>source %<CR>', { desc = '[E]xecute [S]ource lua' })
+
 vim.keymap.set({ 'n', 'v' }, '<RightMouse>', function()
   require('menu.utils').delete_old_menus()
 

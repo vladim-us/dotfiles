@@ -53,7 +53,7 @@ return {
   },
   {
     'tris203/precognition.nvim',
-    enabled = false,
+    enabled = true,
     --event = "VeryLazy",
     opts = {
       -- startVisible = true,

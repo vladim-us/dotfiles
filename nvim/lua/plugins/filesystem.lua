@@ -65,10 +65,22 @@ return {
         end
       end, { desc = 'Open system file explorer for current Oil directory' })
 
+      -- grug_far stuff
       vim.keymap.set('n', '<leader>rnf', function()
-        -- Get the current directory from Oil
-        local oil = require 'oil'
-        local dir = oil.get_current_dir()
+        if vim.bo.filetype == 'oil' then
+          local dir = require('oil').get_current_dir()
+
+          local grug_far = require 'grug-far'
+          if not grug_far.has_instance 'explorer' then
+            grug_far.open { instanceName = 'explorer' }
+          else
+            grug_far.get_instance('explorer'):open()
+          end
+          print(dir)
+
+          local prefills = { paths = dir }
+          grug_far.get_instance('explorer'):update_input_values(prefills, false)
+        end
       end, { desc = '[R]ename in [F]iles' })
     end,
   },
@@ -122,7 +134,7 @@ return {
         },
         window = {
           position = 'left',
-          width = 30,
+          width = 50,
           mappings = {
             -- Disable navigation keys to prevent accidental use
             ['<cr>'] = 'noop',
@@ -146,6 +158,7 @@ return {
           local oil = require 'oil'
           local dir = oil.get_current_dir()
           if dir then
+            print('cmd dir ' .. dir)
             require('neo-tree.command').execute {
               action = 'show',
               source = 'filesystem',
@@ -158,10 +171,6 @@ return {
       })
     end,
   },
-  { 'nvzone/volt', lazy = true },
-  { 'nvzone/menu', lazy = true },
-  {
-    'tpope/vim-vinegar',
-    enabled = false,
-  },
+  { 'nvzone/volt', lazy = true, enabled = false },
+  { 'nvzone/menu', lazy = true, enabled = false },
 }
