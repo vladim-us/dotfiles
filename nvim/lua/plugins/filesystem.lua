@@ -134,7 +134,7 @@ return {
         },
         window = {
           position = 'left',
-          width = 50,
+          width = 30,
           mappings = {
             -- Disable navigation keys to prevent accidental use
             ['<cr>'] = 'noop',
