@@ -1,14 +1,13 @@
 -- init.lua
--- Main Neovim configuration entrypoint
-vim.opt.shell = '/bin/bash'
+vim.opt.shell = '/bin/nu'
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
--- Make line numbers default
+
 vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
+
 vim.o.relativenumber = true
 vim.opt.termguicolors = true
--- MY STUFF
+
 vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
 vim.g.lazyvim_python_lsp = 'basedpyright'
@@ -16,16 +15,9 @@ vim.opt.undodir = os.getenv 'HOME' .. '/.cache/nvim/undodir'
 vim.opt.foldlevelstart = 99
 
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
--- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
-
--- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
 
--- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)

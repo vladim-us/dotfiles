@@ -148,10 +148,6 @@ return {
         },
       }
 
-      -- Keymap to toggle the sidebar
-      vim.keymap.set('n', '<leader>te', ':Neotree toggle reveal filesystem left<CR>', { desc = 'Toggle Directory Sidebar' })
-
-      -- Optional: Sync with Oil - When entering Oil, reveal in Neo-tree
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'oil',
         callback = function()
@@ -171,11 +167,8 @@ return {
       })
     end,
   },
-  { 'nvzone/volt', lazy = true, enabled = false },
-  { 'nvzone/menu', lazy = true, enabled = false },
   {
     'benomahony/oil-git.nvim',
     dependencies = { 'stevearc/oil.nvim' },
-    -- No opts or config needed! Works automatically
   },
 }
