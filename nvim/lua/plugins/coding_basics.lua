@@ -18,28 +18,6 @@ return {
     end,
   },
   {
-    'smjonas/inc-rename.nvim',
-    opts = {
-      hl_group = 'Substitute',
-      preview_empty_name = true,
-      show_message = true,
-      input_buffer_type = nil,
-      post_hook = function()
-        require('lspsaga').init_lsp_saga()
-      end,
-    },
-    keys = {
-      {
-        '<leader>rni',
-        function()
-          return ':IncRename ' .. vim.fn.expand '<cword>'
-        end,
-        expr = true,
-        desc = 'Incremental Rename (with Preview)',
-      },
-    },
-  },
-  {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
@@ -69,7 +47,7 @@ return {
       },
       sync_install = false, -- Async for better UX during setup
       auto_install = true,
-      highlight = { ... },
+      highlight = { enable = true },
       indent = {
         enable = true,
         disable = { 'ruby', 'python', 'c' },

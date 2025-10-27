@@ -31,57 +31,7 @@ return {
           end,
         },
       }
-
-      -- Open parent directory
       vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-
-      -- Open parent directory in floating window
-      -- vim.keymap.set('n', '<space>-', require('oil').toggle_float)
-
-      -- vim.keymap.set('n', '<leader>o', function()
-      --   -- Check if the current buffer is an Oil buffer
-      --   if vim.bo.filetype == 'oil' then
-      --     -- Get the current directory from Oil
-      --     local oil = require 'oil'
-      --     local dir = oil.get_current_dir()
-      --
-      --     if dir then
-      --       local cmd
-      --       if vim.fn.has 'win32' == 1 then
-      --         -- Windows: Use explorer
-      --         cmd = string.format('!explorer "%s"', dir)
-      --       elseif vim.fn.has 'mac' == 1 then
-      --         -- macOS: Use open
-      --         cmd = string.format('!open "%s"', dir)
-      --       else
-      --         -- Linux: Use xdg-open
-      --         cmd = string.format('!xdg-open "%s"', dir)
-      --       end
-      --       vim.cmd(cmd)
-      --     else
-      --       print 'Oil: Could not determine current directory'
-      --     end
-      --   else
-      --     print 'Not an Oil buffer'
-      --   end
-      -- end, { desc = 'Open system file explorer for current Oil directory' })
-
-      -- grug_far stuff
-      vim.keymap.set('n', '<leader>rnf', function()
-        if vim.bo.filetype == 'oil' then
-          local dir = require('oil').get_current_dir()
-          local grug_far = require 'grug-far'
-          if not grug_far.has_instance 'explorer' then
-            grug_far.open { instanceName = 'explorer' }
-          else
-            grug_far.get_instance('explorer'):open()
-          end
-          print(dir)
-
-          local prefills = { paths = dir }
-          grug_far.get_instance('explorer'):update_input_values(prefills, false)
-        end
-      end, { desc = '[R]ename in [F]iles' })
     end,
   },
   {
@@ -133,7 +83,7 @@ return {
           },
         },
         window = {
-          position = 'left',
+          position = 'right',
           width = 30,
           mappings = {
             -- Disable navigation keys to prevent accidental use
@@ -154,11 +104,10 @@ return {
           local oil = require 'oil'
           local dir = oil.get_current_dir()
           if dir then
-            print('cmd dir ' .. dir)
             require('neo-tree.command').execute {
               action = 'show',
               source = 'filesystem',
-              position = 'left',
+              position = 'right',
               reveal_file = dir,
               reveal_force_cwd = true,
             }
