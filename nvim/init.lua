@@ -56,3 +56,4 @@ require 'keymaps'
 
 require('lualine').setup()
 require('actions-preview').setup()
+require 'scooter'
