@@ -13,10 +13,13 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- EXECUTE COMMANDS
-vim.keymap.set('n', '<leader>eg', '<cmd>Neogit<CR>', { desc = '[E]xecute Neogit' })
 vim.keymap.set('v', '<leader>el', ':lua<CR>', { desc = '[E]xecute [L]ua' })
-vim.keymap.set('n', '<leader>es', '<cmd>source %<CR>', { desc = '[E]xecute [S]ource lua' })
-
+--
+-- LAUNCH COMMANDS
+vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>', { desc = '[L]aunch [G]it global' })
+vim.keymap.set('n', '<leader>lG', '<cmd>LazyGitCurrentFile<CR>', { desc = '[L]aunch [G]it Current file' })
+--
+--
 -- vim.keymap.set('n', '<leader>er', function()
 --   local grug_far = require 'grug-far'
 --   if not grug_far.has_instance 'explorer' then

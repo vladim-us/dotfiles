@@ -47,10 +47,11 @@ local function open_scooter_with_text(search_text)
   scooter_term:open()
 end
 
-vim.keymap.set('n', '<leader>s', open_scooter, { desc = 'Open scooter' })
-vim.keymap.set('v', '<leader>r', function()
+-- MORE LAUNCH COMMANDS HERE
+vim.keymap.set('n', '<leader>ls', open_scooter, { desc = '[L]aunch [R]eplace' })
+vim.keymap.set('v', '<leader>ls', function()
   local selection = vim.fn.getreg '"'
   vim.cmd 'normal! "ay'
   open_scooter_with_text(vim.fn.getreg 'a')
   vim.fn.setreg('"', selection)
-end, { desc = 'Search selected text in scooter' })
+end, { desc = '[L]aunch [R]eplace' })
