@@ -96,8 +96,17 @@ return {
     opts = {
       modes = {
         treesitter = {
-          label = { rainbow = { enabled = true } }, -- Enable rainbow for visualizing ranges
+          label = { rainbow = { enabled = true } },
         },
+        char = {
+          enabled = true,
+          search = { wrap = true },
+          highlight = { backdrop = true },
+          jump = { register = true },
+        },
+      },
+      jump = {
+        autojump = true,
       },
     },
     keys = {
