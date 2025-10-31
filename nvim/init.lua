@@ -1,5 +1,4 @@
 require 'options'
--- todo bla
 
 require('lazy').setup({
   {
@@ -56,4 +55,6 @@ require 'keymaps'
 
 require('lualine').setup()
 require('actions-preview').setup()
+
+require 'spell'
 require 'scooter'
