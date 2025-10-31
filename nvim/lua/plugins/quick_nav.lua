@@ -1,5 +1,4 @@
 return {
-
   {
     'romgrk/barbar.nvim',
     dependencies = {
@@ -221,18 +220,34 @@ return {
 
       local keymap = vim.keymap.set
 
-      -- keymap('n', '<leader>fb', fzf.buffers, { desc = '[S]earch existing [B]uffers' })
-      -- keymap('n', '<leader>fm', fzf.marks, { desc = '[S]earch [M]arks' })
-      keymap('n', '<leader>fg', fzf.git_files, { desc = '[F]ind [G]it Files' })
-      keymap('n', '<leader>fd', fzf.files, { desc = '[F]ind [D]irectory Files' })
-      keymap('n', '<leader>ff', fzf.live_grep, { desc = '[F]ind text' })
       keymap('n', '<leader>fr', fzf.resume, { desc = '[F]ind [R]esume' })
-      keymap('n', '<leader>fo', fzf.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+
+      -- Find Text
+      keymap('n', '<leader>ff', function()
+        fzf.live_grep { cwd = require('oil').get_current_dir() }
+      end, { desc = '[F]ind Text in current [D]irectory' })
+      keymap('n', '<leader>fF', fzf.live_grep, { desc = '[F]ind text' })
+      keymap('v', '<leader>ff', function()
+        require('fzf-lua').grep_visual()
+      end, { desc = '[F]ind text from visual selection' })
+
       keymap('n', '<leader>fs', function()
         fzf.lsp_document_symbols {
           symbol_types = { 'Class', 'Function', 'Method', 'Constructor', 'Interface', 'Module', 'Property' },
         }
       end, { desc = '[Find] LSP [S]ymbols' })
+
+      -- Find files
+      keymap('n', '<leader>fg', fzf.git_files, { desc = '[F]ind [G]it Files' })
+      keymap('n', '<leader>fD', fzf.files, { desc = '[F]ind [D]irectory Files' })
+      keymap('v', '<leader>fD', fzf.files, { desc = '[F]ind [D]irectory Files' })
+      keymap('n', '<leader>fd', function()
+        fzf.files { cwd = require('oil').get_current_dir() }
+      end, { desc = '[F]ind in current [D]irectory' })
+      keymap('n', '<leader>fR', fzf.oldfiles, { desc = '[F]ind [Recent] Files' })
+
+      -- keymap('n', '<leader>fb', fzf.buffers, { desc = '[S]earch existing [B]uffers' })
+      -- keymap('n', '<leader>fm', fzf.marks, { desc = '[S]earch [M]arks' })
       -- keymap('n', '<leader>fq', fzf.quickfix, { desc = 'Show quick fix list' })
       -- keymap('n', '<leader>gc', fzf.git_commits, { desc = 'Search [G]it [C]ommits' })
       -- keymap('n', '<leader>gcf', fzf.git_bcommits, { desc = 'Search [G]it [C]ommits for current [F]ile' })
