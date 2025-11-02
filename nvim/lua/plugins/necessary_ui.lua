@@ -27,4 +27,10 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
   { 'akinsho/toggleterm.nvim', version = '*', config = true },
+  {
+    'karb94/neoscroll.nvim',
+    opts = {
+      easing = 'quadratic',
+    },
+  },
 }

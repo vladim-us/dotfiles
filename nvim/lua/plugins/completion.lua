@@ -38,29 +38,14 @@ return {
     },
   },
   {
-    'supermaven-inc/supermaven-nvim',
-    event = 'InsertEnter',
-    enabled = false,
-    cmd = {
-      'SupermavenUseFree',
-      'SupermavenUsePro',
-    },
-    opts = {
-      keymaps = {
-        accept_suggestion = nil,
-      },
-      disable_inline_completion = vim.g.ai_cmp,
-      ignore_filetypes = { 'bigfile', 'snacks_input', 'snacks_notif' },
-    },
-  },
-  {
     'codota/tabnine-nvim',
+    enabled = false,
     build = './dl_binaries.sh',
     config = function()
       require('tabnine').setup {
         accept_keymap = '<Tab>',
         dismiss_keymap = '<C-]>',
-        debounce_ms = 800,
+        debounce_ms = 20,
         suggestion_color = { gui = '#808080', cterm = 244 },
         exclude_filetypes = { 'TelescopePrompt', 'NvimTree' },
         log_file_path = nil,

@@ -19,13 +19,6 @@ return {
     },
   },
   {
-    'tris203/hawtkeys.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-  },
-  {
     'folke/which-key.nvim',
     event = 'VeryLazy',
     keys = {
