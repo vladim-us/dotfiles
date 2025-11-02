@@ -12,7 +12,7 @@ return {
     },
     keys = {
       {
-        '<leader>rni',
+        '<leader>dr',
         function()
           return ':IncRename ' .. vim.fn.expand '<cword>'
         end,

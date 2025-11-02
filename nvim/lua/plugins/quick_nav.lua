@@ -76,7 +76,6 @@ return {
       map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
     end,
   },
-
   {
     'otavioschwanck/arrow.nvim',
     dependencies = {
@@ -174,6 +173,7 @@ return {
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
+    opts = { 'skim' },
     config = function()
       local fzf = require 'fzf-lua'
 

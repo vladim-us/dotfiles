@@ -2,7 +2,7 @@ return {
   {
     'tris203/precognition.nvim',
     enabled = true,
-    event = 'VeryLazy',
+    -- event = 'VeryLazy',
   },
   {
     'm4xshen/hardtime.nvim',
