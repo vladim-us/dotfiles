@@ -8,8 +8,6 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.opt.termguicolors = true
 
-vim.o.foldmethod = 'expr'
-vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
 vim.g.lazyvim_python_lsp = 'basedpyright'
 vim.opt.undodir = os.getenv 'HOME' .. '/.cache/nvim/undodir'
 vim.opt.foldlevelstart = 99

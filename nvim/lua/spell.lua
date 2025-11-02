@@ -1,4 +1,4 @@
-vim.opt.spell = true
+vim.opt.spell = false
 vim.opt.spelllang = 'en_gb'
 
 -- Download spell files automatically if missing

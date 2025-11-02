@@ -18,10 +18,6 @@ return {
     end,
   },
   {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-  },
-  {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
@@ -45,49 +41,39 @@ return {
         'yaml',
         'toml',
       },
-      sync_install = false, -- Async for better UX during setup
+      sync_install = false,
       auto_install = true,
       highlight = { enable = true },
       indent = {
         enable = true,
         disable = { 'ruby', 'python', 'c' },
       },
-      incremental_selection = { ... },
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
-            ['ap'] = '@parameter.outer',
-            ['ip'] = '@parameter.inner',
-          },
-        },
-        move = {
-          enable = true,
-          set_jumps = true,
-          goto_next_start = {
-            [']m'] = '@function.outer',
-            [']]'] = '@class.outer',
-          },
-          goto_previous_start = {
-            ['[m'] = '@function.outer',
-            ['[['] = '@class.outer',
-          },
-        },
-      },
+    },
+  },
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = 'kevinhwang91/promise-async',
+    event = 'VeryLazy',
+    opts = {
+      provider_selector = function()
+        return { 'treesitter', 'indent' }
+      end,
     },
     config = function(_, opts)
-      require('nvim-treesitter.configs').setup(opts)
-      vim.opt.foldmethod = 'expr'
-      vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-      vim.opt.foldlevel = 99
+      require('ufo').setup(opts)
+      vim.o.foldcolumn = '1'
+      vim.o.foldlevel = 99
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+
+      local map = vim.keymap.set
+      -- map('n', 'za', 'za', { desc = 'Toggle ffold ' })
+      map('n', 'zc', 'zc', { desc = 'Close ffold' })
+      map('n', 'zo', 'zo', { desc = 'Open ffold' })
+      map('n', 'zR', require('ufo').openAllFolds, { desc = 'Open all folds' })
+      map('n', 'zM', require('ufo').closeAllFolds, { desc = 'Close all folds' })
     end,
   },
-
   {
     'folke/trouble.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },

@@ -55,6 +55,5 @@ require 'keymaps'
 
 require('lualine').setup()
 require('actions-preview').setup()
-require('hawtkeys').setup {}
 require 'spell'
 require 'scooter'
