@@ -1,4 +1,4 @@
-def tt [] {btm --theme gruvbox --cpu-left-legend --dot-marker --group-processes}
+def tt [] {btm --theme gruvbox --cpu-left-legend --group-processes}
 def h [$num?] { 
 	if ($num | is-empty) {
 		history | reverse | take 10

@@ -37,10 +37,10 @@ return {
       },
     },
   },
-
   { 'dstein64/nvim-scrollview' },
   {
     'sphamba/smear-cursor.nvim',
+    enabled = true,
     event = 'VeryLazy',
     cond = vim.g.neovide == nil,
     opts = {
@@ -72,6 +72,7 @@ return {
   { 'akinsho/toggleterm.nvim', version = '*', config = true },
   {
     'karb94/neoscroll.nvim',
+    enabled = true,
     opts = {
       easing = 'quadratic',
     },

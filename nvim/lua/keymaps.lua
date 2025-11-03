@@ -1,7 +1,4 @@
-vim.keymap.set('n', '<leader>dv', vim.cmd.Ex, { desc = 'Open [D]irectory [V]iew' })
-
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'clear search highlight' })
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move"<CR>')
@@ -17,9 +14,7 @@ vim.keymap.set('v', '<leader>el', ':lua<CR>', { desc = '[E]xecute [L]ua' })
 --
 -- LAUNCH COMMANDS
 vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>', { desc = '[L]aunch [G]it global' })
-vim.keymap.set('n', '<leader>lG', '<cmd>LazyGitCurrentFile<CR>', { desc = '[L]aunch [G]it Current file' })
---
---
+
 -- vim.keymap.set('n', '<leader>er', function()
 --   local grug_far = require 'grug-far'
 --   if not grug_far.has_instance 'explorer' then

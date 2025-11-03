@@ -72,4 +72,11 @@ return {
       vim.keymap.set({ 'n', 'v' }, 'gf', ap.code_actions)
     end,
   },
+  {
+    'stevearc/quicker.nvim',
+    ft = 'qf',
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
+    opts = {},
+  },
 }
