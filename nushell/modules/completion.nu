@@ -1,3 +1,4 @@
+
 def git_checkout_completer [spans: list<string>] {
     let adjusted = ["git", "checkout"] ++ ($spans | skip 1)
     carapace git nushell ...$adjusted | from json
